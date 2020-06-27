@@ -22,7 +22,7 @@ func TestSnakeToCamel(t *testing.T) {
 			wantCamelCase: "UserId",
 		},
 		{
-			name:          "if the first letter is lower case, capitalize",
+			name:          "if the first letter is lowercase, capitalize",
 			args:          args{"userId"},
 			wantCamelCase: "UserId",
 		},
