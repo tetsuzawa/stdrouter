@@ -1,6 +1,19 @@
 package stdrouter
 
 // DropDuplication drops duplicate elements.
+func Drop(s string, ss []string) []string {
+	if ss == nil {
+		return nil
+	}
+	for i, v := range ss {
+		if s == v {
+			return append(ss[:i], ss[i+1:]...)
+		}
+	}
+	return ss
+}
+
+// DropDuplication drops duplicate elements.
 func DropDuplication(ss []string) []string {
 	if ss == nil {
 		return nil

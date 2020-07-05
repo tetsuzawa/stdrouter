@@ -5,6 +5,36 @@ import (
 	"testing"
 )
 
+func TestDrop(t *testing.T) {
+	type args struct {
+		s  string
+		ss []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{
+			name: "drop if slice contains designated element",
+			args: args{"bbb", []string{"aaa", "bbb", "ccc", "ddd"}},
+			want: []string{"aaa", "ccc", "ddd"},
+		},
+		{
+			name: "do nothing if slice does not contains designated element",
+			args: args{"bbb", []string{"aaa", "ccc", "ddd"}},
+			want: []string{"aaa", "ccc", "ddd"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Drop(tt.args.s, tt.args.ss); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Drop() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestDropDuplication(t *testing.T) {
 	type args struct {
 		ss []string
@@ -41,8 +71,8 @@ func TestDropDuplication(t *testing.T) {
 
 func TestContains(t *testing.T) {
 	type args struct {
-		e string
-		s []string
+		s  string
+		ss []string
 	}
 	tests := []struct {
 		name string
@@ -62,7 +92,7 @@ func TestContains(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Contains(tt.args.e, tt.args.s); got != tt.want {
+			if got := Contains(tt.args.s, tt.args.ss); got != tt.want {
 				t.Errorf("Contains() = %v, want %v", got, tt.want)
 			}
 		})
