@@ -12,6 +12,18 @@ type HandlerFunc struct {
 	Func    string
 }
 
+var HTTPMethods = []string{
+	"MethodGet",
+	"MethodHead",
+	"MethodPost",
+	"MethodPut",
+	"MethodPatch",
+	"MethodDelete",
+	"MethodConnect",
+	"MethodOptions",
+	"MethodTrace",
+}
+
 // Node is node of tree structure for path.
 type Node struct {
 	Depth       int
