@@ -767,3 +767,133 @@ Endpoint: post_id, IsPathPram: true, Methods: map[GET:{handler GetPost}]
 		})
 	}
 }
+
+func TestBuildBasePath(t *testing.T) {
+	rootNode := &Node{
+		Depth:    0,
+		Endpoint: "",
+		Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetRoot"}},
+		Children: []*Node{
+			{
+				Depth:    1,
+				Endpoint: "api",
+				Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetAPI"}},
+				Children: []*Node{
+					{
+						Depth:    2,
+						Endpoint: "users",
+						Methods: map[string]HandlerFunc{
+							http.MethodGet:  {"handler", "GetUsers"},
+							http.MethodPost: {"handler", "CreateUsers"},
+						},
+					},
+				},
+			},
+		},
+	}
+	node := &Node{
+		Depth:    3,
+		Endpoint: "create",
+		Methods:  map[string]HandlerFunc{http.MethodPost: {"handler", "CreateUser"}},
+		Children: nil,
+	}
+	rootNode.Children[0].Children[0].Children = append(rootNode.Children[0].Children[0].Children, node)
+	rootNode.registerParent()
+
+	rootNode2 := &Node{
+		Depth:    0,
+		Endpoint: "",
+		Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetRoot"}},
+		Children: []*Node{
+			{
+				Depth:    1,
+				Endpoint: "api",
+				Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetAPI"}},
+				Children: []*Node{
+					{
+						Depth:    2,
+						Endpoint: "users",
+						Methods: map[string]HandlerFunc{
+							http.MethodGet:  {"handler", "GetUsers"},
+							http.MethodPost: {"handler", "CreateUsers"},
+						},
+						Children: []*Node{
+							{
+								Depth:    3,
+								Endpoint: "create",
+								Methods:  map[string]HandlerFunc{http.MethodPost: {"handler", "CreateUsers"}},
+							},
+							{
+								Depth:       3,
+								Endpoint:    "user_id",
+								IsPathParam: true,
+								Methods:     map[string]HandlerFunc{http.MethodGet: {"handler", "GetUser"}},
+								Children: []*Node{
+									{
+										Depth:    4,
+										Endpoint: "posts",
+										Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetPosts"}},
+										Children: nil,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	node2 := &Node{
+		Depth:    5,
+		Endpoint: "create",
+		Methods:  map[string]HandlerFunc{http.MethodPost: {"handler", "CreatePost"}},
+		Children: nil,
+	}
+	rootNode2.Children[0].Children[0].Children[1].Children[0].Children = append(rootNode2.Children[0].Children[0].Children[1].Children[0].Children, node2)
+	rootNode2.registerParent()
+
+	rootNode3 := &Node{
+		Depth:    0,
+		Endpoint: "",
+		Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetRoot"}},
+		Children: nil,
+	}
+	node3 := &Node{
+		Depth:1,
+		Endpoint:"api",
+		Methods:  map[string]HandlerFunc{http.MethodGet: {"handler", "GetAPI"}},
+	}
+	rootNode3.Children = append(rootNode3.Children, node3)
+	rootNode3.registerParent()
+	type args struct {
+		node *Node
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "if path param does not exist, build base path from arg node to root node",
+			args: args{node: node},
+			want: "/api/users",
+		},
+		{
+			name: "if path param exists, build base path from arg node to path param node",
+			args: args{node: node2},
+			want: "/posts",
+		},
+		{
+			name: `if the depth of arg node is 1, return "/"`,
+			args: args{node: node3},
+			want: "/",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := BuildBasePath(tt.args.node); got != tt.want {
+				t.Errorf("BuildBasePath() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
