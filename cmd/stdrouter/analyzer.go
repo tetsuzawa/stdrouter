@@ -78,7 +78,6 @@ func SetImportedPkg(genDecl *ast.GenDecl, cfg *AnalyzerConfig) error {
 	for _, spec := range genDecl.Specs {
 		importSpec, ok := spec.(*ast.ImportSpec)
 		if !ok {
-			//TODO import aliasの処理
 			return nil
 		}
 		name, err := strconv.Unquote(importSpec.Path.Value)
@@ -106,13 +105,11 @@ func SetRouterInstance(assignStmt *ast.AssignStmt, cfg *AnalyzerConfig) error {
 
 	callExpr, ok := assignStmt.Rhs[0].(*ast.CallExpr)
 	if !ok {
-		log.Println("not CallExpr")
 		return nil
 	}
 
 	selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
 	if !ok {
-		log.Println("not CallExpr")
 		return nil
 	}
 	packageIdent, ok := selectorExpr.X.(*ast.Ident)
@@ -120,11 +117,9 @@ func SetRouterInstance(assignStmt *ast.AssignStmt, cfg *AnalyzerConfig) error {
 		return fmt.Errorf("syntax error: %s", cfg.fset.Position(selectorExpr.X.Pos()))
 	}
 	if packageIdent.Name != "stdrouter" {
-		log.Println("not stdrouter")
 		return nil
 	}
 	if selectorExpr.Sel.Name != "NewRouter" {
-		log.Println("not NewRouter")
 		return nil
 	}
 	cfg.RouterInstanceName = routerIdent.Name
@@ -134,12 +129,10 @@ func SetRouterInstance(assignStmt *ast.AssignStmt, cfg *AnalyzerConfig) error {
 func RegisterHandler(exprStmt *ast.ExprStmt, cfg *AnalyzerConfig) error {
 	callExpr, ok := exprStmt.X.(*ast.CallExpr)
 	if !ok {
-		log.Println("not CallExpr")
 		return nil
 	}
 	selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
 	if !ok {
-		log.Println("not SelectorExpr")
 		return nil
 	}
 	routerIdent, ok := selectorExpr.X.(*ast.Ident)
@@ -148,7 +141,6 @@ func RegisterHandler(exprStmt *ast.ExprStmt, cfg *AnalyzerConfig) error {
 	}
 	// Check if the Ident is router instance
 	if routerIdent.Name != cfg.RouterInstanceName {
-		log.Println("not router instance")
 		return nil
 	}
 	methodName := selectorExpr.Sel.Name
@@ -213,15 +205,14 @@ func RegisterHandleFunc(args []ast.Expr, cfg *AnalyzerConfig) error {
 	if ok {
 		handlerIdent, ok = handlerSelectorExpr.X.(*ast.Ident)
 		if !ok {
-			log.Println("not Ident")
+			return nil
 		}
 		packageName = handlerIdent.Name
 		funcName = handlerSelectorExpr.Sel.Name
 	} else {
 		handlerIdent, ok = args[2].(*ast.Ident)
 		if !ok {
-			// TODO check implementation
-			log.Println("not Ident")
+			return nil
 		}
 		packageName = ""
 		funcName = handlerIdent.Name
@@ -243,15 +234,14 @@ func RegisterHandleNotFound(args []ast.Expr, cfg *AnalyzerConfig) error {
 	if ok {
 		handlerIdent, ok = handlerSelectorExpr.X.(*ast.Ident)
 		if !ok {
-			log.Println("not Ident")
+			return nil
 		}
 		packageName = handlerIdent.Name
 		funcName = handlerSelectorExpr.Sel.Name
 	} else {
 		handlerIdent, ok = args[0].(*ast.Ident)
 		if !ok {
-			// TODO check implementation
-			log.Println("not Ident")
+			return nil
 		}
 		packageName = ""
 		funcName = handlerIdent.Name
@@ -273,15 +263,14 @@ func RegisterHandleMethodNotAllowed(args []ast.Expr, cfg *AnalyzerConfig) error 
 	if ok {
 		handlerIdent, ok = handlerSelectorExpr.X.(*ast.Ident)
 		if !ok {
-			return fmt.Errorf("syntax error: %s", cfg.fset.Position(handlerSelectorExpr.X.Pos()))
+			return nil
 		}
 		packageName = handlerIdent.Name
 		funcName = handlerSelectorExpr.Sel.Name
 	} else {
 		handlerIdent, ok = args[0].(*ast.Ident)
 		if !ok {
-			// TODO check implementation
-			log.Println("not Ident")
+			return nil
 		}
 		packageName = ""
 		funcName = handlerIdent.Name

@@ -664,7 +664,6 @@ func TestNode_Add(t *testing.T) {
 }
 
 func TestWalk(t *testing.T) {
-	//TODO add parent
 	endPoints := make([]string, 0)
 	buf := &bytes.Buffer{}
 	node := &Node{
