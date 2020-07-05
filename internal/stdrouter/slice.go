@@ -15,3 +15,13 @@ func DropDuplication(ss []string) []string {
 	}
 	return res
 }
+
+// Contains checks whether the argument slice s contains e.
+func Contains(s string, ss []string) bool {
+	for _, v := range ss {
+		if s == v {
+			return true
+		}
+	}
+	return false
+}

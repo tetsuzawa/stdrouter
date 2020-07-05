@@ -38,3 +38,33 @@ func TestDropDuplication(t *testing.T) {
 		})
 	}
 }
+
+func TestContains(t *testing.T) {
+	type args struct {
+		e string
+		s []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "return true if the slice contains",
+			args: args{"abc", []string{"abc", "def", "ghi"}},
+			want: true,
+		},
+		{
+			name: "return false if the slice does not contains",
+			args: args{"xyz", []string{"abc", "def", "ghi"}},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Contains(tt.args.e, tt.args.s); got != tt.want {
+				t.Errorf("Contains() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
