@@ -1,5 +1,6 @@
 // No implementation.
-//
+// This package is only used in router file (default: "router.go").
+// See example.
 
 package stdrouter
 
