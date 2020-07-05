@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Tetsu Takizawa
 
 //+build stdrouter
+//go:generate stdrouter
 
 // The build tag makes sure the stub is not built in the final build.
 package main
@@ -15,8 +16,8 @@ import (
 // NewHandler creates a http router. It passes HTTP requests to the function.
 func NewRouter() http.Handler {
 	r := stdrouter.NewRouter()
-	r.HandleFunc("/", http.MethodGet, handler.RootGET)
-	r.HandleFunc("/api", http.MethodGet, handler.API)
+	r.HandleFunc("/", http.MethodGet, handler.GetRoot)
+	r.HandleFunc("/api", http.MethodGet, handler.GetAPIRoot)
 	r.HandleFunc("/api/users", http.MethodGet, handler.GetUsers)
 	r.HandleFunc("/api/products", http.MethodGet, handler.GetProducts)
 	r.HandleFunc("/api/products", http.MethodPost, handler.CreateProducts)
@@ -29,7 +30,7 @@ func NewRouter() http.Handler {
 	r.HandleFunc("/api/users/:user_id/posts/:post_id", http.MethodGet, handler.GetPost)
 	r.HandleFunc("/api/users/:user_id/posts/:post_id/aaa", http.MethodGet, handler.GetPost)
 	r.HandleFunc("/api/users/:user_id/posts/:post_id/aaa/bbb", http.MethodGet, handler.GetPost)
-	r.HandleNotFound(handler.MethodNotAllowedHandler)
+	r.HandleNotFound(handler.NotFoundHandler)
 	r.HandleMethodNotAllowed(handler.MethodNotAllowedHandler)
 	/*
 		...
