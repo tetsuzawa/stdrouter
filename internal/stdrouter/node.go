@@ -2,6 +2,7 @@ package stdrouter
 
 import (
 	"fmt"
+	"path"
 	"strings"
 )
 
@@ -95,6 +96,16 @@ func (n *Node) Add(p string, httpMethod string, handlerFunc HandlerFunc) error {
 	return nil
 }
 
+
+// Print prints general information of each nodes.
+func (n *Node) Print() {
+	Walk(n, func(node *Node) bool {
+		fmt.Printf("Depth: %v, Endpoint: %v, IsPathPram: %v, Methods: %v, hasParent: %v, numChildren: %v\n",
+			node.Depth, node.Endpoint, node.IsPathParam, node.Methods, node.Parent == nil, len(node.Children))
+		return true
+	})
+}
+
 // Walk performs a BFS (breadth-first search) on the tree structure of nodes
 // and executes the argument function on each node.
 // If the return value is false, the search ends.
@@ -121,12 +132,16 @@ func Walk(node *Node, fn func(*Node) bool) {
 	}
 }
 
-// Print prints general information of each nodes.
-func (n *Node) Print() {
-	Walk(n, func(node *Node) bool {
-		fmt.Printf("Depth: %v, Endpoint: %v, IsPathPram: %v, Methods: %v, hasParent: %v, numChildren: %v\n",
-			node.Depth, node.Endpoint, node.IsPathParam, node.Methods, node.Parent == nil, len(node.Children))
-		return true
-	})
+// BuildBasePath builds base path from root to argument node.
+// If path param node is found, stop building and returns the path.
+func BuildBasePath(node *Node) (p string) {
+	n := node
+	for n.Parent != nil {
+		if n.Parent.IsPathParam{
+			break
+		}
+		p = path.Clean("/" + n.Parent.Endpoint + p)
+		n = n.Parent
+	}
+	return p
 }
-
