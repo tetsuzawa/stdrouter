@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Tetsu Takizawa
 
 //+build stdrouter
-//go:generate stdrouter
 
 // The build tag makes sure the stub is not built in the final build.
 package main
