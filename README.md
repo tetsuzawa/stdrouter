@@ -6,8 +6,8 @@
 </p>
 
 <p style="text-align: center">
-<a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License"></a
-<img src="https://github.com/tetsuzawa/go-adflib/workflows/Test/badge.svg" alt="Test">
+<a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License"></a>
+<img src="https://github.com/tetsuzawa/stdrouter/workflows/Test/badge.svg" alt="Test">
 </p>
 
 ## Introduction
